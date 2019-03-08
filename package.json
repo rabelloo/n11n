@@ -1,0 +1,28 @@
+{
+  "name": "n11n",
+  "version": "1.0.0",
+  "description": "Normalization for TypeScript/JavaScript",
+  "author": "Andre Luiz Rabello <andre.luiz_r@hotmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rabelloo/n11n.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rabelloo/n11n/issues"
+  },
+  "homepage": "https://github.com/rabelloo/n11n#readme",
+  "keywords": [
+    "normalization",
+    "normalizer",
+    "normalizr",
+    "3nf",
+    "schema"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
+  }
+}
