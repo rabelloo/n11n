@@ -305,20 +305,20 @@ the alias as the first item in it - a tuple of [`string`, `Key`]:
 ```typescript
 const farm = schema<Farm>({
   //    your entity name
-  //         vvvvv
-  owner: ['people', 'id'],
-  owners: ['people', ['id']],
-  goose: ['geese', g => g.id],
-  geese: ['geese', [g => g.id]],
+  //         vvvvvv
+  owner:  [ 'people',    'id'     ],
+  owners: [ 'people',   ['id']    ],
+  goose:  [ 'geese',   g => g.id  ],
+  geese:  [ 'geese',  [g => g.id] ],
   //                   ^^^^^^^^^
   // you can still use any version of Key<T>
 });
 
 farm.entities({
-  owner: { id: 1 },
+  owner:   { id: 1 },
   owners: [{ id: 2 }],
-  goose: { id: 3 },
-  geese: [{ id: 4 }],
+  goose:   { id: 3 },
+  geese:  [{ id: 4 }],
 });
 // {
 //   owners: [
