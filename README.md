@@ -40,11 +40,12 @@ Let me try and explain why I felt this way:
    if need be - for really extraordinary plurals or property aliases e.g. `{ owner: User } => 'users'`
 
 That said, this is still a work in progress and much can be improved.
+
 Please feel free to provide feedback and submit issues, if you find yourself using it.
 
 ## Usage
 
-Like normalizr, it's pretty simple.
+Like [normalizr](https://github.com/paularmstrong/normalizr), it's pretty simple.
 
 You just need your interfaces:
 
@@ -62,7 +63,7 @@ interface Director {
 }
 ```
 
-Your schema(s):
+Your schemas:
 
 ```typescript
 const movieSchema = schema<Movie>({
@@ -132,7 +133,7 @@ You can use either `arrays` or `objects`, as demonstrated above.
 ### Entities
 
 To extract `entities`, simply call the respective `Schema` function
-(splitting both functions is efficient and runs fast, test it out!):
+(decoupling from `normalize()` is efficient and runs fast, test it out!):
 
 ```typescript
 movieSchema.entities([starWars4, starWars5]);
@@ -166,17 +167,18 @@ directorSchema.entities(georgeLucas);
 If you have a keen eye you noticed circular references are kept.
 They were also abbreviated as variables above.
 
-The solution is simple: to define a clone (preprocess) strategy:
+The solution is simple: to define a clone/preprocess strategy (called `processStrategy`
+in [normalizr](https://github.com/paularmstrong/normalizr)):
 
 ```typescript
 const movieSchema = schema<Movie>(
   { director: d => d.id },
-  // vvvvvvvv     it's an optional second argument to schema
+// vvvvvvvvvv     it's an optional second argument to schema()
   movie => ({
     ...movie,
     director: directorSchema.normalize(movie.director),
-    //        ^^^^^^^^^^^^^^
-    // we can use the other schema to normalize it
+//            ^^^^^^^^^^^^^^
+// we can use the other schema to normalize it
   })
 });
 
@@ -192,36 +194,35 @@ movieSchema.entities([starWars4, starWars5]);
 // }
 ```
 
-You could create new `Schema`s too, there's no problem because
-**they're just a set of immutable functions, there are no classes involved**.
+In fact this occurs so commonly that **there's a helper** for creating
+the cloner function: `linear()`.
 
 ```typescript
 const movieSchema = schema<Movie>( { director: d => d.id },
-  movie => ({
-    ...movie,
-    director: schema<Director>({ movies: [m => m.id] }).normalize(movie.director),
+  linear({
+//  each key is a property of Movie
+//  vvvvvvvv
+    director: directorSchema
+//            ^^^^^^^^^^^^^^
+//  each value a schema of the property's type
+  })
+});
+```
+
+You could create new `Schema`s too, there's no problem because
+**they're just a set of pure functions, there are no classes involved**.
+
+```typescript
+const movieSchema = schema<Movie>( { director: d => d.id },
+  linear({
+    director: schema<Director>({ movies: [m => m.id] }),
     //        ^^^^^^^^^^^^^^^^
     //  we can also create a new schema
   })
 });
 ```
 
-In fact this occurs so commonly that there's a helper for creating
-the cloner function: `linear()`.
-
-```typescript
-const movieSchema = schema<Movie>( { director: d => d.id },
-  linear({
-    // each key is a property of Movie
-    // vvvvv
-    director: directorSchema
-    //        ^^^^^^^^^^^^^^
-    // each value a schema of the property's type
-  })
-});
-```
-
-Reusing `Schema`s could be problem because you have circular
+Reusing `Schema`s could be a problem because you have circular
 dependencies in the `Schema`s themselves.
 
 `movieSchema <==> directorSchema`
@@ -230,17 +231,19 @@ An easy pattern to adopt are `Schema` creators:
 
 ```typescript
 function createMovieSchema() {
-  return schema<Movie>({ director: d => d.id },
+  return schema<Movie>(
+    { director: d => d.id },
     linear({
-      director: createDirectorSchema()
+      director: createDirectorSchema(),
     })
   );
 }
 
 function createDirectorSchema() {
-  return schema<Director>({ movie: m => m.id },
+  return schema<Director>(
+    { movie: m => m.id },
     linear({
-      movies: createDirectorSchema()
+      movies: createDirectorSchema(),
     })
   );
 }
@@ -256,6 +259,8 @@ Feel free to come up with your own cool patterns and let me know!
 
 After you've successfully normalized and extracted entities from your data,
 you might want to denormalize it at some point, perhaps for component consumption.
+
+Just feed it your normalized object/array and the entities you extracted:
 
 ```typescript
 const normalizedLucas = directorSchema.normalize(georgeLucas);
@@ -280,7 +285,9 @@ directorSchema.denormalize(normalizedLucas, entities);
 // }
 ```
 
-## Entity name
+## Gotchas
+
+### Entity name
 
 Unlike `normalizr`, you don't need to name the `Schema.Entity`,
 it's inferred from the property name e.g.
@@ -325,26 +332,94 @@ farm.entities({
 // }
 ```
 
+### Merge strategy
+
+Simply pass it as the last item in your `Key` Tuple, it's optional:
+
+
+```typescript
+schema<Movie>({
+  //                  this is the default function btw
+  //                    vvvvvvvvvvvvvvvvvvvvvvvvvv
+  director: [d => d.id, (a, b) => ({ ...a, ...b })],
+  // or
+  director: ['producers', d => d.id, (a, b) => ({ ...a, ...b })],
+  //          ^^^^^^^^^
+  //     you can pass alias too
+});
+```
+
+So effectively either `[ alias?, Key!, mergeFunction? ]` or `Key!`
+
+### Arrays
+
+For every property that is an `Array`, simply wrap the key in square brackets `[]`:
+
+```typescript
+schema<Director>({
+  movies: [m => m.id],
+  // or
+  movies: ['films', [m => m.id]],
+  // or
+  movies: ['films', [m => m.id], myMergeStrategy],
+});
+```
+
+### Keys
+
+For `K in keyof T`, they are either `K`, `(t: T) => T[K]` or `Schema<T[K]>`:
+
+Meaning:
+
+```typescript
+schema<Movie>({
+  director: 'id',
+  // or
+  director: d => d.id,
+  // or
+  director: schema<Director>({}),
+});
+```
+
+Feel free whatever as a key, but your only parameter is the item itself:
+
+
+```typescript
+schema<Movie>({
+  director: d => myHashFunction(d.name),
+  // or composite keys
+  director: d => d.name + d.movies.length
+});
+```
+
+
 ## Cool tricks
 
 ### Object transformation
 
 As stated before, you can use `Schema`s to transform objects without
-necessarily normalizing objects.
+necessarily normalizing them.
 
 Simply use the second argument to pass in a cloning function:
 
 ```typescript
-let id = 1;
+let id = 0;
 const directorSchema = schema<Director>(
   {}, // <== notice the empty normalizer keys arg
   director => ({
-    id: id++,
+    id: ++id,
     name: `Director: ${name}`,
     movies: mapMovies(director.movies),
-    //         ^^^^ defined somewhere else
+    //      ^^^^^^^^^  defined somewhere else
   })
 );
+
+directorSchema.normalize(georgeLucas);
+//  {
+//    id: 1,
+//    name: 'Director: George Lucas',
+//    movies: << mapped by funcion >>
+//  }
 ```
 
 ## Notes
