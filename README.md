@@ -37,7 +37,7 @@ Let me try and explain why I felt this way:
    using `mergeStrategy` (see 4.);
 6. Last but not least, I realized I could infer the entity names from the property names
    of the argument object passed to `schema`, while still providing a way to override it
-   if need be (for really extraordinary plurals or property aliases e.g. { owner: User } => 'users')
+   if need be - for really extraordinary plurals or property aliases e.g. `{ owner: User } => 'users'`
 
 That said, this is still a work in progress and much can be improved.
 Please feel free to provide feedback and submit issues, if you find yourself using it.
