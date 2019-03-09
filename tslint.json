@@ -4,9 +4,18 @@
   "rulesDirectory": [],
   "rules": {
     "arrow-parens": [true, "ban-single-arg-parens"],
-    "quotemark": [true, "single"],
-    "member-access": [true, "no-public"],
+    "array-type": [true, "array"],
     "interface-name": [true, "never-prefix"],
+    "member-access": [true, "no-public"],
+    "object-literal-sort-keys": false,
+    "quotemark": [true, "single"],
+    "ordered-imports": [
+      true,
+      {
+        "import-sources-order": "lowercase-last",
+        "named-imports-order": "lowercase-first"
+      }
+    ],
     "trailing-comma": [
       true,
       {

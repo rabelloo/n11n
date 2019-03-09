@@ -1,6 +1,11 @@
+import { Cloner } from './cloner';
+import { Entity } from './entity';
 import { process } from './process';
-import { Entity } from './property';
 
-export function normalize<T>(item: T, schemaEntities: Entity<T>[]): T {
-  return process(item, schemaEntities, ({ extract }) => extract(item));
+export function normalize<T>(
+  item: T,
+  schemaEntities: Entity<T>[],
+  cloner: Cloner<T>
+): T {
+  return process(item, schemaEntities, ({ extract }) => extract(item), cloner);
 }

@@ -1,10 +1,19 @@
+const oExceptions = ['echo', 'embargo', 'hero', 'potato', 'tomato', 'veto', 'volcano'];
+
+/**
+ * Returns the plural form of a word.
+ *
+ * If it's too far off norms, it will deliberately be wrong e.g. `goose -> gooses`.
+ *
+ * If not a string will return `''`
+ * @param word Word to get its plural form
+ */
 export function pluralize(word: string): string {
   if (!word || typeof word !== 'string') {
     return '';
   }
 
   const { concat, ifEndsWith, ifEndsWithEither, ifIsIn } = helpersFor(word);
-  const oExceptions = ['echo', 'embargo', 'hero', 'potato', 'tomato', 'veto'];
 
   return (
     ifEndsWith('ex').replace('ices') ||
@@ -19,8 +28,8 @@ export function pluralize(word: string): string {
     ifEndsWith('y').then(({ replace }) =>
       /[aeiou]y$/.test(word) ? concat('s') : replace('ies')
     ) ||
-    ifEndsWithEither('craft', 's').keep() ||
-    ifEndsWithEither('ch', 'sh', 'x', 'z').concat('es') ||
+    ifEndsWithEither('craft').keep() ||
+    ifEndsWithEither('ch', 'sh', 's', 'x', 'z').concat('es') ||
     concat('s')
   );
 }
@@ -36,7 +45,7 @@ function helpersFor(word: string) {
       return { concat: end, replace: end, then: end };
     }
 
-    const replace = (repl: string) => word.slice(0, -repl.length) + repl;
+    const replace = (repl: string) => word.slice(0, -chars.length) + repl;
 
     return {
       concat,

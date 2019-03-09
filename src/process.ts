@@ -1,15 +1,21 @@
-import { Entity } from './property';
+import { Cloner } from './cloner';
+import { Entity } from './entity';
 
+/**
+ * Processes an item according to schema.Entity[],
+ * a processor and a cloner.
+ * @param item Item to process with entities.
+ * @param entities schema.Entity[] to process in item.
+ * @param processor Processor to apply for each schema.Entity.
+ * @param cloner Cloner to excute with item on setup.
+ */
 export function process<T>(
   item: T,
   entities: Entity<T>[],
-  processor: (prop: Entity<T>) => void
+  processor: (entity: Entity<T>) => void,
+  cloner: Cloner<T>
 ) {
-  if (!(item instanceof Object)) {
-    return item;
-  }
-
-  const clone = { ...item } as any;
+  const clone = cloner(item) as any;
 
   // reducer would be potentially slower
   // because of the amount of spreading
