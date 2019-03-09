@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/rabelloo/n11n.svg?branch=master)](https://travis-ci.org/rabelloo/n11n)
+[![Coverage Status](https://codecov.io/gh/rabelloo/n11n/branch/master/graph/badge.svg)](https://codecov.io/gh/rabelloo/n11n)
+
 # n11n
 
 Normalization for TypeScript/JavaScript
