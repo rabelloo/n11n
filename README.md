@@ -1,4 +1,4 @@
-# n11n ~ [![Build Status](https://img.shields.io/travis/rabelloo/n11n.svg?logo=travis)](https://travis-ci.org/rabelloo/n11n) [![Coverage Status](https://codecov.io/gh/rabelloo/n11n/branch/master/graph/badge.svg)](https://codecov.io/gh/rabelloo/n11n) [![npm version](https://img.shields.io/npm/v/n11n.svg?logo=npm)](https://www.npmjs.com/package/n11n)
+# n11n ~ [![Build Status](https://img.shields.io/travis/rabelloo/n11n.svg?logo=travis)](https://travis-ci.org/rabelloo/n11n) [![Coverage Status](https://codecov.io/gh/rabelloo/n11n/branch/master/graph/badge.svg)](https://codecov.io/gh/rabelloo/n11n) [![npm version](https://img.shields.io/npm/v/n11n.svg?logo=npm)](https://www.npmjs.com/package/n11n) [![dependencies](https://img.shields.io/david/rabelloo/n11n.svg)](https://david-dm.org/rabelloo/n11n)
 
 Normalization for TypeScript/JavaScript
 
