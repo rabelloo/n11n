@@ -22,6 +22,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "tslint src/**/*.ts --fix",
+    "lint:ci": "tslint src/**/*.ts",
     "test": "jest --watch",
     "test:ci": "jest --coverage"
   },

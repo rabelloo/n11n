@@ -1,0 +1,30 @@
+language: node_js
+node_js:
+  - "10.15"
+
+branches:
+  only:
+    - master
+
+cache:
+  directories:
+     - node_modules
+
+install:
+  - npm ci
+  - npm i -g codecov
+
+before_script:
+  - npm run lint:ci
+  - npm run test:ci
+
+script:
+  - npm run build
+
+after_success:
+  - codecov
+
+notifications:
+  email:
+    on_failure: change
+    on_success: change
