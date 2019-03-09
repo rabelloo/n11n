@@ -11,7 +11,7 @@ Normalization for TypeScript/JavaScript
 
 ## Why does this exist?
 
-I know what you're thinking, **why not use normalizr instead**?
+I know what you're thinking, **why not use [normalizr](https://github.com/paularmstrong/normalizr) instead**?
 
 It's a great library made by great people, but I wanted a nicer API,
 especially when working with TypeScript.
