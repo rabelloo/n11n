@@ -1,7 +1,4 @@
-[![Build Status](https://travis-ci.org/rabelloo/n11n.svg?branch=master)](https://travis-ci.org/rabelloo/n11n)
-[![Coverage Status](https://codecov.io/gh/rabelloo/n11n/branch/master/graph/badge.svg)](https://codecov.io/gh/rabelloo/n11n)
-
-# n11n
+# n11n ~ [![Build Status](https://img.shields.io/travis/rabelloo/n11n.svg?logo=travis)](https://travis-ci.org/rabelloo/n11n) [![Coverage Status](https://codecov.io/gh/rabelloo/n11n/branch/master/graph/badge.svg)](https://codecov.io/gh/rabelloo/n11n) [![npm version](https://img.shields.io/npm/v/n11n.svg?logo=npm)](https://www.npmjs.com/package/n11n)
 
 Normalization for TypeScript/JavaScript
 
@@ -309,19 +306,19 @@ the alias as the first item in it - a tuple of [`string`, `Key`]:
 const farm = schema<Farm>({
   //    your entity name
   //         vvvvvv
-  owner:  [ 'people',    'id'     ],
-  owners: [ 'people',   ['id']    ],
-  goose:  [ 'geese',   g => g.id  ],
-  geese:  [ 'geese',  [g => g.id] ],
+  owner: ['people', 'id'],
+  owners: ['people', ['id']],
+  goose: ['geese', g => g.id],
+  geese: ['geese', [g => g.id]],
   //                   ^^^^^^^^^
   // you can still use any version of Key<T>
 });
 
 farm.entities({
-  owner:   { id: 1 },
+  owner: { id: 1 },
   owners: [{ id: 2 }],
-  goose:   { id: 3 },
-  geese:  [{ id: 4 }],
+  goose: { id: 3 },
+  geese: [{ id: 4 }],
 });
 // {
 //   owners: [
@@ -338,7 +335,6 @@ farm.entities({
 ### Merge strategy
 
 Simply pass it as the last item in your `Key` Tuple, it's optional:
-
 
 ```typescript
 schema<Movie>({
@@ -386,15 +382,13 @@ schema<Movie>({
 
 Feel free whatever as a key, but your only parameter is the item itself:
 
-
 ```typescript
 schema<Movie>({
   director: d => myHashFunction(d.name),
   // or composite keys
-  director: d => d.name + d.movies.length
+  director: d => d.name + d.movies.length,
 });
 ```
-
 
 ## Cool tricks
 

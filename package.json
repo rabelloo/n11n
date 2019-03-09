@@ -4,6 +4,7 @@
   "description": "Normalization for TypeScript/JavaScript",
   "author": "Andre Luiz Rabello <andre.luiz_r@hotmail.com>",
   "license": "MIT",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rabelloo/n11n.git"
@@ -18,6 +19,9 @@
     "normalizr",
     "3nf",
     "schema"
+  ],
+  "files": [
+    "dist"
   ],
   "scripts": {
     "build": "tsc",
