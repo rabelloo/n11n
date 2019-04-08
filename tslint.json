@@ -3,8 +3,8 @@
   "extends": ["tslint:recommended"],
   "rulesDirectory": [],
   "rules": {
-    "arrow-parens": [true, "ban-single-arg-parens"],
     "array-type": [true, "array"],
+    "arrow-parens": [true, "ban-single-arg-parens"],
     "interface-name": [true, "never-prefix"],
     "member-access": [true, "no-public"],
     "object-literal-sort-keys": false,
