@@ -16,7 +16,7 @@ export interface Entity<T extends {}> {
 
 export function entitiesFor<T>(keys: Keys<T>): Entity<T>[] {
   return Object.entries(keys).map(([prop, polymorphicKey]) => {
-    const [alias, key, wasArrayKey, merger] = define(polymorphicKey);
+    const [alias, key, wasArrayKey, merger] = define(polymorphicKey as any);
     const name = alias || (wasArrayKey ? prop : pluralize(prop));
 
     return {

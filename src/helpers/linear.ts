@@ -22,7 +22,7 @@ export function linear<T>(properties: Linear<T>): Cloner<T> {
     const clone: any = defaultClone(item);
 
     Object.entries(properties).forEach(([prop, schema]) => {
-      clone[prop] = schema.normalize(clone[prop]);
+      clone[prop] = (schema as any).normalize(clone[prop]);
     });
 
     return clone;
