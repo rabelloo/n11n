@@ -25,16 +25,14 @@
   ],
   "scripts": {
     "build": "tsc",
-    "lint": "tslint src/**/*.ts --fix",
-    "lint:ci": "tslint src/**/*.ts",
-    "test": "jest --watch",
-    "test:ci": "jest --coverage"
+    "lint": "tslint src/**/*.ts",
+    "test": "jest --coverage"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.18",
+    "@types/jest": "^24.0.25",
     "jest": "^24.9.0",
-    "ts-jest": "^24.1.0",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.3"
+    "ts-jest": "^24.2.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4"
   }
 }
