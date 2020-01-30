@@ -173,12 +173,12 @@ in [normalizr](https://github.com/paularmstrong/normalizr)):
 ```typescript
 const movieSchema = schema<Movie>(
   { director: d => d.id },
-// vvvvvvvvvv     it's an optional second argument to schema()
+// vvvvvvvvvv     it's an optional second argument for schema()
   movie => ({
     ...movie,
     director: directorSchema.normalize(movie.director),
-//            ^^^^^^^^^^^^^^
-// we can use the other schema to normalize it
+    //        ^^^^^^^^^^^^^^
+    // we can use the other schema to normalize it
   })
 });
 
@@ -241,9 +241,9 @@ function createMovieSchema() {
 
 function createDirectorSchema() {
   return schema<Director>(
-    { movie: m => m.id },
+    { movies: [m => m.id] },
     linear({
-      movies: createDirectorSchema(),
+      movies: createMovieSchema(),
     })
   );
 }
@@ -304,14 +304,14 @@ the alias as the first item in it - a tuple of [`string`, `Key`]:
 
 ```typescript
 const farm = schema<Farm>({
-  //    your entity name
-  //         vvvvvv
+  //   your entity name
+  //       vvvvvv
   owner: ['people', 'id'],
   owners: ['people', ['id']],
   goose: ['geese', g => g.id],
   geese: ['geese', [g => g.id]],
-  //                   ^^^^^^^^^
-  // you can still use any version of Key<T>
+  //                ^^^^^^^^^
+  //   you can still use any version of Key<T>
 });
 
 farm.entities({
@@ -338,13 +338,13 @@ Simply pass it as the last item in your `Key` Tuple, it's optional:
 
 ```typescript
 schema<Movie>({
-  //                  this is the default function btw
+  //                 this is the default function btw
   //                    vvvvvvvvvvvvvvvvvvvvvvvvvv
   director: [d => d.id, (a, b) => ({ ...a, ...b })],
   // or
   director: ['producers', d => d.id, (a, b) => ({ ...a, ...b })],
   //          ^^^^^^^^^
-  //     you can pass alias too
+  //   you can pass aliases too
 });
 ```
 
@@ -380,7 +380,7 @@ schema<Movie>({
 });
 ```
 
-Feel free whatever as a key, but your only parameter is the item itself:
+Feel free to use whatever as a key, but your only parameter is the item itself:
 
 ```typescript
 schema<Movie>({
