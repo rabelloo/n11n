@@ -1,4 +1,4 @@
-import { pluralize } from '../helpers/pluralize';
+import { pluralize } from './pluralize';
 
 describe('pluralize', () => {
   it('should return empty string when invalid arg is passed', () => {

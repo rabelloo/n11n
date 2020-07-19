@@ -1,10 +1,10 @@
+import { defaultMerge } from '../helpers/defaultMerge';
+import { define } from '../helpers/define';
+import { extractorFor } from '../helpers/extractorFor';
+import { pluralize } from '../helpers/pluralize';
+import { retrieverFor } from '../helpers/retrieverFor';
+import type { ArrayKey, Key, Keys, SingleKey } from '../key.types';
 import type { Entities } from './entitiesIn';
-import { defaultMerge } from './helpers/defaultMerge';
-import { define } from './helpers/define';
-import { extractorFor } from './helpers/extractorFor';
-import { pluralize } from './helpers/pluralize';
-import { retrieverFor } from './helpers/retrieverFor';
-import type { ArrayKey, Key, Keys, SingleKey } from './key.types';
 
 export function entitiesFor<T>(keys: Keys<T>): Entity<T>[] {
   return Object.entries(keys).map(([prop, polymorphicKey]) => {

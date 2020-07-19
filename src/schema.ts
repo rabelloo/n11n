@@ -1,9 +1,9 @@
-import { defaultClone } from './defaultClone';
-import { denormalize } from './denormalize';
-import { entitiesFor } from './entitiesFor';
-import { Entities, entitiesIn } from './entitiesIn';
+import { denormalize } from './core/denormalize';
+import { entitiesFor } from './core/entitiesFor';
+import { Entities, entitiesIn } from './core/entitiesIn';
+import { normalize } from './core/normalize';
+import { defaultClone } from './helpers/defaultClone';
 import type { Keys } from './key.types';
-import { normalize } from './normalize';
 
 /**
  * Creates a schema object for a specified Entity.
@@ -36,7 +36,10 @@ import { normalize } from './normalize';
  *   bothArray: [ 'alias', [key], (_, b) => b ],
  * });
  */
-export function schema<T>(keys: Keys<T>, clone = defaultClone): Schema<T> {
+export function schema<T>(
+  keys: Keys<T>,
+  clone: (item: T) => T = defaultClone
+): Schema<T> {
   const schemaEntities = entitiesFor(keys);
 
   return {

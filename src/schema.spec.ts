@@ -1,4 +1,4 @@
-import { linear, schema } from '../index';
+import { linear, schema } from './index';
 
 describe('schema', () => {
   const georgeLucas: Director = {

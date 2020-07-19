@@ -1,4 +1,4 @@
-import type { Entities } from '../entitiesIn';
+import type { Entities } from '../core/entitiesIn';
 import type { Key } from '../key.types';
 import { Schema } from '../schema';
 import { accessorFor } from './acessorFor';

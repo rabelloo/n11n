@@ -1,5 +1,5 @@
-import { defaultClone } from '../defaultClone';
 import type { Schema } from '../schema';
+import { defaultClone } from './defaultClone';
 
 /**
  * Creates a `Cloner` function that normalizes the specified
