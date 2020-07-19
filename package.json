@@ -24,8 +24,9 @@
     "dist"
   ],
   "scripts": {
+    "prebuild": "rm -rf dist",
     "build": "tsc",
-    "lint": "tslint src/**/*.ts",
+    "lint": "tslint -p tsconfig.build.json",
     "test": "jest --coverage",
     "prepublishOnly": "npm run build"
   },

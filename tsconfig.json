@@ -1,17 +1,16 @@
 {
   "include": ["src/**/*"],
-  "exclude": ["src/**/*.spec.*"],
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
 
-    "module": "es6",
+    "module": "esnext",
     "moduleResolution": "node",
-    "target": "es6",
+    "target": "es2019",
     "esModuleInterop": true,
     "sourceMap": true,
 
-    "lib": ["es2019"],
+    "lib": ["esnext"],
 
     "alwaysStrict": true,
     "declaration": true,
