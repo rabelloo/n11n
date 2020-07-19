@@ -2,9 +2,8 @@ import { pluralize } from '../helpers/pluralize';
 
 describe('pluralize', () => {
   it('should return empty string when invalid arg is passed', () => {
-    const plural = pluralize(null as any);
-
-    expect(plural).toBe('');
+    expect(pluralize(null as any)).toBe('');
+    expect(pluralize('')).toBe('');
   });
 
   it('should handle words that end in "ex"', () => {
@@ -15,12 +14,9 @@ describe('pluralize', () => {
     expect(pluralize('cactus')).toBe('cacti');
   });
 
-  it('should handle words that end in "oof"', () => {
-    expect(pluralize('roof')).toBe('roofs');
-  });
-
-  it('should handle words that end in "f" but not "oof"', () => {
+  it('should handle words that end in "f"', () => {
     expect(pluralize('wolf')).toBe('wolves');
+    expect(pluralize('roof')).toBe('roofs');
   });
 
   it('should handle words that end in "fe"', () => {
