@@ -1,76 +1,53 @@
-import { linear, schema, Schema } from '../index';
-import { ObjectMap } from '../object-map';
+import { linear, schema } from '../index';
 
 describe('schema', () => {
-  let georgeLucas: Director;
-  let starWars4: Movie;
-  let starWars5: Movie;
-  let movieSchema: Schema<Movie>;
-  let directorSchema: Schema<Director>;
-
-  const setupMovieSchema = () => {
-    movieSchema = schema<Movie>({ director: d => d.id });
+  const georgeLucas: Director = {
+    id: 't1234',
+    name: 'George Lucas',
+    movies: [],
   };
-  const setupDirectorSchema = () => {
-    directorSchema = schema<Director>({ movies: [m => m.id] });
+  const starWars4: Movie = {
+    id: 1,
+    title: 'Star Wars: Episode IV - A New Hope',
+    director: georgeLucas,
+  };
+  const starWars5: Movie = {
+    id: 2,
+    title: 'Star Wars: Episode V - The Empire Strikes Back',
+    director: georgeLucas,
   };
 
-  beforeEach(() => {
-    georgeLucas = {
-      id: 't1234',
-      name: 'George Lucas',
-      movies: [],
-    };
+  // creating a circular reference,
+  // but it could also be duplicate data, doesn't matter
+  georgeLucas.movies = [starWars4, starWars5];
 
-    starWars4 = {
-      id: 1,
-      title: 'Star Wars: Episode IV - A New Hope',
-      director: georgeLucas,
-    };
-
-    starWars5 = {
-      id: 2,
-      title: 'Star Wars: Episode V - The Empire Strikes Back',
-      director: georgeLucas,
-    };
-
-    // creating a circular reference,
-    // but it could also be duplicate data, doesn't matter
-    georgeLucas.movies = [starWars4, starWars5];
-  });
+  const movieSchema = schema<Movie>({ director: (d) => d.id });
+  const directorSchema = schema<Director>({ movies: [(m) => m.id] });
 
   it('should accepted nested schemas', () => {
-    setupMovieSchema();
+    const result = schema<Director>({ movies: [movieSchema] });
 
-    directorSchema = schema<Director>({
-      movies: [movieSchema],
-    });
-
-    expect(directorSchema).toBeDefined();
+    expect(result).toBeDefined();
   });
 
   describe('normalize', () => {
     it('should normalize an object', () => {
-      setupDirectorSchema();
+      const result = directorSchema.normalize(georgeLucas);
 
-      const normalized = directorSchema.normalize(georgeLucas);
-
-      expect(normalized).not.toBe(georgeLucas);
-      expect(normalized).toEqual({
+      expect(result).not.toBe(georgeLucas);
+      expect(result).toStrictEqual({
         ...georgeLucas,
-        movies: [starWars4, starWars5].map(m => m.id),
+        movies: [starWars4, starWars5].map((m) => m.id),
       });
     });
 
     it('should normalize an array', () => {
-      setupMovieSchema();
+      const result = movieSchema.normalize([starWars4, starWars5]);
 
-      const normalized = movieSchema.normalize([starWars4, starWars5]);
-
-      expect(normalized[0]).not.toBe(starWars4);
-      expect(normalized[1]).not.toBe(starWars5);
-      expect(normalized).toEqual(
-        [starWars4, starWars5].map(movie => ({
+      expect(result[0]).not.toBe(starWars4);
+      expect(result[1]).not.toBe(starWars5);
+      expect(result).toStrictEqual(
+        [starWars4, starWars5].map((movie) => ({
           ...movie,
           director: georgeLucas.id,
         }))
@@ -78,93 +55,85 @@ describe('schema', () => {
     });
 
     it('should work with string as property key when provided', () => {
-      directorSchema = schema<Director>({ movies: ['id'] });
+      const testSchema = schema<Director>({ movies: ['id'] });
 
-      const normalized = directorSchema.normalize(georgeLucas);
+      const result = testSchema.normalize(georgeLucas);
 
-      expect(normalized.movies).toEqual([starWars4.id, starWars5.id]);
+      expect(result.movies).toStrictEqual([starWars4.id, starWars5.id]);
     });
 
     it('should simply clone an already normalized object', () => {
-      setupDirectorSchema();
       const normalized = directorSchema.normalize(georgeLucas);
 
-      const renormalized = directorSchema.normalize(normalized);
+      const result = directorSchema.normalize(normalized);
 
-      expect(renormalized).not.toBe(normalized);
-      expect(renormalized).toEqual(normalized);
+      expect(result).not.toBe(normalized);
+      expect(result).toStrictEqual(normalized);
     });
   });
 
   describe('denormalize', () => {
     it('should denormalize an object', () => {
-      setupDirectorSchema();
       const normalized = directorSchema.normalize(georgeLucas);
       const entities = directorSchema.entities(georgeLucas);
 
-      const denormalized = directorSchema.denormalize(normalized, entities);
+      const result = directorSchema.denormalize(normalized, entities);
 
-      expect(denormalized).not.toBe(georgeLucas);
-      expect(denormalized).toEqual(georgeLucas);
+      expect(result).not.toBe(georgeLucas);
+      expect(result).toStrictEqual(georgeLucas);
     });
 
     it('should denormalize an array', () => {
-      setupMovieSchema();
       const normalized = movieSchema.normalize([starWars4, starWars5]);
       const entities = movieSchema.entities([starWars4, starWars5]);
 
-      const denormalized = movieSchema.denormalize(normalized, entities);
+      const result = movieSchema.denormalize(normalized, entities);
 
-      expect(denormalized[0]).not.toBe(starWars4);
-      expect(denormalized[1]).not.toBe(starWars5);
-      expect(denormalized).toEqual([starWars4, starWars5]);
+      expect(result[0]).not.toBe(starWars4);
+      expect(result[1]).not.toBe(starWars5);
+      expect(result).toStrictEqual([starWars4, starWars5]);
     });
 
     it('should return the normalized reference itself if no entity is found', () => {
-      setupDirectorSchema();
       const normalized = directorSchema.normalize(georgeLucas);
 
-      const denormalized = directorSchema.denormalize(normalized, {});
+      const result = directorSchema.denormalize(normalized, {});
 
-      expect(denormalized.movies).toEqual([starWars4.id, starWars5.id]);
+      expect(result.movies).toStrictEqual([starWars4.id, starWars5.id]);
     });
 
     it('should handle null/undefined when expecting arrays', () => {
-      setupDirectorSchema();
       const normalized = directorSchema.normalize({
         ...georgeLucas,
         movies: null as any,
       });
 
-      const denormalized = directorSchema.denormalize(normalized, {});
+      const result = directorSchema.denormalize(normalized, {});
 
-      expect(denormalized.movies).toEqual([]);
+      expect(result.movies).toStrictEqual([]);
     });
   });
 
   describe('entities', () => {
     it('should extract all schema entities from an object', () => {
-      setupDirectorSchema();
       const entities = directorSchema.entities(georgeLucas);
 
       expect(entities.movies[starWars4.id]).not.toBe(starWars4);
-      expect(entities).toEqual({
-        movies: toObjectMap([starWars4, starWars5], m => m.id),
+      expect(entities).toStrictEqual({
+        movies: toRecord([starWars4, starWars5], (m) => m.id),
       });
     });
 
     it('should extract all schema entities from an array', () => {
-      setupMovieSchema();
       const entities = movieSchema.entities([starWars4, starWars5]);
 
       expect(entities.directors).not.toBe(georgeLucas);
-      expect(entities).toEqual({
+      expect(entities).toStrictEqual({
         directors: { [georgeLucas.id]: georgeLucas },
       });
     });
 
     it('should prevent null objects from being added to the resulting entities', () => {
-      setupMovieSchema();
       const directorless = { id: 5, title: 'Directorless' } as Movie;
 
       const entities = movieSchema.entities(directorless);
@@ -173,39 +142,43 @@ describe('schema', () => {
     });
 
     it('should remove circular references when using linear()', () => {
-      movieSchema = schema<Movie>(
-        { director: d => d.id },
+      const testSchema = schema<Movie>(
+        { director: (d) => d.id },
         linear<Movie>({ director: directorSchema })
       );
 
-      const entities = movieSchema.entities(starWars4);
+      const entities = testSchema.entities(starWars4);
 
-      expect(entities.directors).toEqual({
+      expect(entities.directors).toStrictEqual({
         [georgeLucas.id]: {
           ...georgeLucas,
-          movies: georgeLucas.movies.map(m => m.id),
+          movies: georgeLucas.movies.map((m) => m.id),
         },
       });
     });
 
     it('should rename entities with aliases if provided', () => {
       const alias = 'producers';
-      movieSchema = schema<Movie>({
+      const testSchema = schema<Movie>({
         director: [alias, (d: Director) => d.id],
       });
 
-      const entities = movieSchema.entities(starWars4);
+      const entities = testSchema.entities(starWars4);
 
       expect(entities[alias]).toBeDefined();
       expect(entities.directors).not.toBeDefined();
     });
 
     it('should use the merge function if provided', () => {
-      movieSchema = schema<Movie>({ director: [d => d.id, (_, b) => b] });
-      directorSchema = schema<Director>({ movies: [[m => m.id], (_, b) => b] });
+      const testMovieSchema = schema<Movie>({
+        director: [(d) => d.id, (_, b) => b],
+      });
+      const testDirectorSchema = schema<Director>({
+        movies: [[(m) => m.id], (_, b) => b],
+      });
 
-      const movieEntities = movieSchema.entities(starWars4);
-      const directorEntities = directorSchema.entities(georgeLucas);
+      const movieEntities = testMovieSchema.entities(starWars4);
+      const directorEntities = testDirectorSchema.entities(georgeLucas);
 
       expect(movieEntities.directors[georgeLucas.id]).toBe(georgeLucas);
       expect(directorEntities.movies[starWars4.id]).toBe(starWars4);
@@ -213,11 +186,11 @@ describe('schema', () => {
 
     it('should use an alias and merge function if provided', () => {
       const alias = 'films';
-      directorSchema = schema<Director>({
-        movies: [alias, [m => m.id], (_, b) => b],
+      const testSchema = schema<Director>({
+        movies: [alias, [(m) => m.id], (_, b) => b],
       });
 
-      const entities = directorSchema.entities(georgeLucas);
+      const entities = testSchema.entities(georgeLucas);
 
       expect(entities[alias][starWars4.id]).toBe(starWars4);
     });
@@ -239,15 +212,9 @@ interface Director extends Person {
   movies: Movie[];
 }
 
-function toObjectMap<T>(
-  data: T[],
-  keyFn: (item: T, index: number) => any
-): ObjectMap<T> {
-  return data.reduce(
-    (hashMap, item, index) => ({
-      ...hashMap,
-      [`${keyFn(item, index)}`]: item,
-    }),
-    {}
+const toRecord = <T>(data: T[], keyFn: KeyFn<T>): Record<string, T> =>
+  Object.fromEntries(
+    Object.values(data).map((item, index) => [`${keyFn(item, index)}`, item])
   );
-}
+
+type KeyFn<T> = (item: T, index: number) => string | number;

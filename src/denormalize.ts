@@ -1,18 +1,13 @@
-import { Cloner } from './cloner';
-import { Entities } from './entities';
-import { Entity } from './entity';
+import type { Entity } from './entitiesFor';
+import type { Entities } from './entitiesIn';
 import { process } from './process';
 
 export function denormalize<T>(
   item: T,
   schemaEntities: Entity<T>[],
-  entities: Entities,
-  cloner: Cloner<T>
+  entities: Entities
 ): T {
-  return process(
-    item,
-    schemaEntities,
-    ({ retrieve }) => retrieve(item, entities),
-    cloner
+  return process(item, schemaEntities, ({ retrieve }) =>
+    retrieve(item, entities)
   );
 }

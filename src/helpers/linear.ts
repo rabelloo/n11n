@@ -1,5 +1,5 @@
-import { defaultClone, Cloner } from '../cloner';
-import { Schema } from '../schema';
+import { defaultClone } from '../defaultClone';
+import type { Schema } from '../schema';
 
 /**
  * Creates a `Cloner` function that normalizes the specified
@@ -8,24 +8,24 @@ import { Schema } from '../schema';
  *
  * To be used with `schema<T>()`.
  * @param properties Object with keys that are `T` properties and
- * values that are `Schema`s of that property's type
- *
+ * values that are `Schema`s of that property's type.
  * @example
- * schema<Book>({ author: a => a.id },
- * * linear({
- * *   books: schema<Author>({ book: b => b.id })
- * * })
+ * schema<Book>(
+ *   { author: a => a.id },
+ *   linear({
+ *     books: schema<Author>({ book: b => b.id })
+ *   })
  * );
  */
-export function linear<T>(properties: Linear<T>): Cloner<T> {
-  return item => {
+export function linear<T>(properties: Linear<T>) {
+  return (item: T) => {
     const clone: any = defaultClone(item);
 
     Object.entries(properties).forEach(([prop, schema]) => {
-      clone[prop] = (schema as any).normalize(clone[prop]);
+      clone[prop] = (schema as Schema<T>).normalize(clone[prop]);
     });
 
-    return clone;
+    return clone as T;
   };
 }
 

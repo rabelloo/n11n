@@ -1,5 +1,4 @@
-import { Cloner } from './cloner';
-import { Entity } from './entity';
+import type { Entity } from './entitiesFor';
 
 /**
  * Processes an item according to schema.Entity[],
@@ -12,17 +11,15 @@ import { Entity } from './entity';
 export function process<T>(
   item: T,
   entities: Entity<T>[],
-  processor: (entity: Entity<T>) => void,
-  cloner: Cloner<T>
+  processor: (entity: Entity<T>) => unknown
 ) {
-  const clone = cloner(item) as any;
-
   // reducer would be potentially slower
   // because of the amount of spreading
   // depending on the number of properties
-  entities.forEach(entity => {
-    clone[entity.prop] = processor(entity);
+  entities.forEach((entity) => {
+    type Key = keyof T;
+    item[entity.prop as Key] = processor(entity) as T[Key];
   });
 
-  return clone;
+  return item;
 }
