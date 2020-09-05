@@ -1,6 +1,6 @@
 {
   "name": "n11n",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Normalization for TypeScript/JavaScript",
   "author": "Andre Luiz Rabello <andre.luiz_r@hotmail.com>",
   "license": "MIT",
