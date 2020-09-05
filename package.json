@@ -21,7 +21,8 @@
     "schema"
   ],
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "prebuild": "rm -rf dist",
