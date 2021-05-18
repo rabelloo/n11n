@@ -11,11 +11,6 @@ module.exports = {
       statements: 100,
     },
   },
-  globals: {
-    'ts-jest': {
-      tsConfig: 'tsconfig.json',
-    },
-  },
   moduleFileExtensions: ['js', 'ts'],
   preset: 'ts-jest',
   rootDir: 'src', // acts as if file was inside /src folder
